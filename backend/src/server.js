@@ -1,5 +1,5 @@
 
-
+const connectDB = require("./config/db");
 //1. Import dependencies
 const express = require("express");
 const dotenv = require("dotenv");
@@ -9,6 +9,7 @@ const morgan = require("morgan");
 
 //2. Load environment variables
 dotenv.config();
+connectDB();
 //3. Create Express app
 const app = express();
 //4. Register middleware
