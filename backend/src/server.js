@@ -1,3 +1,4 @@
+const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
 //1. Import dependencies
@@ -17,7 +18,7 @@ app.use(express.json());     //JSON parsing
 app.use(cors());             //Frontend-Backend communication
 app.use(helmet());           //Security Headers
 app.use(morgan("dev"));      //Logging
-
+app.use("/api/auth", authRoutes);
 
 //5. Add a health-check route
 app.get("/", (req, res) => {
