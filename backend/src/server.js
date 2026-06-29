@@ -5,6 +5,9 @@ const connectDB = require("./config/db");
 const allocationRoutes = require(
   "./routes/allocationRoutes"
 );
+const hospitalRoutes = require("./routes/hospitalRoutes");
+
+
 
 //1. Import dependencies
 const express = require("express");
@@ -29,6 +32,7 @@ app.use(
   "/api/allocations",
   allocationRoutes
 );
+app.use("/api/hospitals", hospitalRoutes);
 
 //5. Add a health-check route
 app.get("/", (req, res) => {

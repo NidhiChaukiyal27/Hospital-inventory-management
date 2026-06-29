@@ -10,12 +10,19 @@ const {
 } = require(
   "../controllers/allocationController"
 );
+const protect = require("../middleware/authMiddleware");
+const adminOnly = require("../middleware/adminMiddleware");
 
 router.get("/", getAllocations);
 router.post("/", createAllocation);
 router.get("/unfulfilled",getUnfulfilledAllocations);
 router.get("/:id", getAllocationById);
 router.patch("/:id/confirm", confirmAllocation);
-
+router.post(
+  "/",
+  protect,
+  adminOnly,
+  createAllocation
+);
 
 module.exports = router;

@@ -1,0 +1,21 @@
+const express = require("express");
+const router = express.Router();
+const Hospital = require("../models/Hospital");
+
+router.post("/", async (req, res) => {
+  try {
+    const hospital = await Hospital.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      hospital,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+module.exports = router;
