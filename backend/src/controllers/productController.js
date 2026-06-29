@@ -2,12 +2,34 @@ const Product = require("../models/Product");
 
 const getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({
-      is_active: true,
-    });
+    const page =
+      parseInt(req.query.page) || 1;
+
+    const limit =
+      parseInt(req.query.limit) || 5;
+
+    const skip =
+      (page - 1) * limit;
+
+    const products =
+      await Product.find({
+        is_active: true,
+      })
+        .skip(skip)
+        .limit(limit);
+
+    const total =
+      await Product.countDocuments({
+        is_active: true,
+      });
 
     res.status(200).json({
       success: true,
+      currentPage: page,
+      totalPages: Math.ceil(
+        total / limit
+      ),
+      totalProducts: total,
       count: products.length,
       products,
     });
@@ -137,6 +159,37 @@ const deleteProduct = async (req, res, next) => {
     next(error);
   }
 };
+const searchProducts = async (req, res, next) => {
+  try {
+    const query = req.query.query;
+
+    const products = await Product.find({
+      is_active: true,
+      $or: [
+        {
+          item_name: {
+            $regex: query,
+            $options: "i",
+          },
+        },
+        {
+          category: {
+            $regex: query,
+            $options: "i",
+          },
+        },
+      ],
+    });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getProducts,
@@ -144,4 +197,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  searchProducts,
 };
