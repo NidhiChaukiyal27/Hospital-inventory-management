@@ -97,8 +97,28 @@ const loginUser = async (req, res, next) => {
     next(error);
   }
 };
+const getMe = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const user =
+      await User.findById(
+        req.user.id
+      ).select("-password");
+
+    res.status(200).json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getMe
 };
