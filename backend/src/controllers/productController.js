@@ -1,8 +1,15 @@
+const Product = require("../models/Product");
+
 const getProducts = async (req, res, next) => {
   try {
-    res.json({
+    const products = await Product.find({
+      is_active: true,
+    });
+
+    res.status(200).json({
       success: true,
-      message: "Get all products API working"
+      count: products.length,
+      products,
     });
   } catch (error) {
     next(error);
@@ -22,9 +29,42 @@ const getProductById = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
   try {
+    console.log(req.body);
+    const {
+      item_code,
+      item_name,
+      category,
+      uom,
+      unit_cost,
+      reorder_level,
+      current_stock,
+    } = req.body;
+
+    const existingProduct = await Product.findOne({
+      item_code,
+    });
+
+    if (existingProduct) {
+      return res.status(400).json({
+        success: false,
+        message: "Product code already exists",
+      });
+    }
+
+    const product = await Product.create({
+      item_code,
+      item_name,
+      category,
+      uom,
+      unit_cost,
+      reorder_level,
+      current_stock,
+    });
+
     res.status(201).json({
       success: true,
-      message: "Create product API working"
+      message: "Product created successfully",
+      product,
     });
   } catch (error) {
     next(error);
