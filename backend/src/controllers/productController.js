@@ -18,9 +18,20 @@ const getProducts = async (req, res, next) => {
 
 const getProductById = async (req, res, next) => {
   try {
-    res.json({
+    const product = await Product.findById(
+      req.params.id
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    res.status(200).json({
       success: true,
-      message: "Get product by ID API working"
+      product,
     });
   } catch (error) {
     next(error);
