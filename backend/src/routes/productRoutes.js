@@ -19,6 +19,16 @@ const adminOnly = require(
   "../middleware/adminMiddleware"
 );
 
+const {
+  productValidation,
+} = require(
+  "../validations/productValidation"
+);
+
+const validate = require(
+  "../middleware/validate"
+);
+
 router.get("/", getProducts);
 router.get("/search", searchProducts);
 router.get("/:id", getProductById);
@@ -26,6 +36,8 @@ router.post(
   "/",
   protect,
   adminOnly,
+  productValidation,
+  validate,
   createProduct
 );
 
@@ -33,6 +45,8 @@ router.put(
   "/:id",
   protect,
   adminOnly,
+  productValidation,
+  validate,
   updateProduct
 );
 
