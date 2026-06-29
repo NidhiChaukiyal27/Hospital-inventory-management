@@ -24,5 +24,11 @@ router.post(
   adminOnly,
   createAllocation
 );
+router.patch(
+  "/:id/confirm",
+  protect,
+  adminOnly,
+  confirmAllocation
+);
 
 module.exports = router;

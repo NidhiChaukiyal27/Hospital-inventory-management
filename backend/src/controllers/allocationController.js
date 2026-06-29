@@ -132,12 +132,136 @@ const getAllocationById = async (req, res, next) => {
 };
 
 const confirmAllocation = async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    res.json({
+    const allocation = await Allocation.findById(
+      req.params.id
+    )
+      .populate("hospital")
+      .session(session);
+
+    if (!allocation) {
+      await session.abortTransaction();
+      session.endSession();
+
+      return res.status(404).json({
+        success: false,
+        message: "Allocation not found",
+      });
+    }
+
+    // Prevent reconfirming the same allocation
+    if (allocation.status !== "IN_TRANSIT") {
+      await session.abortTransaction();
+      session.endSession();
+
+      return res.status(400).json({
+        success: false,
+        message: `Allocation already ${allocation.status}`,
+      });
+    }
+
+    const hospital = await Hospital.findById(
+      allocation.hospital._id
+    ).session(session);
+
+    let totalSent = 0;
+    let totalReceived = 0;
+
+    for (const receivedItem of req.body.items) {
+      const allocatedItem = allocation.items.find(
+        (item) =>
+          item.product.toString() ===
+          receivedItem.product
+      );
+
+      if (!allocatedItem) {
+        continue;
+      }
+
+      const qtyReceived = Number(
+        receivedItem.qty_received
+      );
+
+      allocatedItem.qty_received = qtyReceived;
+
+      totalSent += allocatedItem.qty_sent;
+      totalReceived += qtyReceived;
+
+      // Add stock to hospital inventory
+      if (qtyReceived > 0) {
+        const inventoryItem =
+          hospital.inventory.find(
+            (item) =>
+              item.product.toString() ===
+              receivedItem.product
+          );
+
+        if (inventoryItem) {
+          inventoryItem.quantity += qtyReceived;
+        } else {
+          hospital.inventory.push({
+            product: receivedItem.product,
+            quantity: qtyReceived,
+          });
+        }
+      }
+
+      // Return remaining stock to warehouse
+      const remaining =
+        allocatedItem.qty_sent -
+        qtyReceived;
+
+      if (remaining > 0) {
+        const product =
+          await Product.findById(
+            receivedItem.product
+          ).session(session);
+
+        if (product) {
+          product.current_stock +=
+            remaining;
+
+          await product.save({
+            session,
+          });
+        }
+      }
+    }
+
+    // Determine status
+    if (totalReceived === 0) {
+      allocation.status = "REJECTED";
+    } else if (
+      totalReceived === totalSent
+    ) {
+      allocation.status = "CONFIRMED";
+    } else {
+      allocation.status = "PARTIAL";
+    }
+
+    await hospital.save({ session });
+    await allocation.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    const updatedAllocation =
+      await Allocation.findById(
+        allocation._id
+      ).populate("hospital");
+
+    res.status(200).json({
       success: true,
-      message: "Confirm allocation API working",
+      message:
+        "Allocation confirmed successfully",
+      allocation: updatedAllocation,
     });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     next(error);
   }
 };
