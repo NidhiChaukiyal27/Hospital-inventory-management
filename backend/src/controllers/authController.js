@@ -116,9 +116,24 @@ const getMe = async (
     next(error);
   }
 };
+const logoutUser = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully"
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   registerUser,
   loginUser,
-  getMe
+  getMe,
+  logoutUser
 };
