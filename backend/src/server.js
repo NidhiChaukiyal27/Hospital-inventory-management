@@ -2,6 +2,10 @@ const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
+const allocationRoutes = require(
+  "./routes/allocationRoutes"
+);
+
 //1. Import dependencies
 const express = require("express");
 const dotenv = require("dotenv");
@@ -21,6 +25,10 @@ app.use(helmet());           //Security Headers
 app.use(morgan("dev"));      //Logging
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use(
+  "/api/allocations",
+  allocationRoutes
+);
 
 //5. Add a health-check route
 app.get("/", (req, res) => {
