@@ -1,3 +1,4 @@
+const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const connectDB = require("./config/db");
@@ -19,6 +20,7 @@ app.use(cors());             //Frontend-Backend communication
 app.use(helmet());           //Security Headers
 app.use(morgan("dev"));      //Logging
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 //5. Add a health-check route
 app.get("/", (req, res) => {
