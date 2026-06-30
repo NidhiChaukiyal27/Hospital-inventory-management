@@ -17,6 +17,11 @@ const dashboardRoutes =
     "./routes/dashboardRoutes"
   );
 
+  const reportRoutes =
+  require(
+    "./routes/reportRoutes"
+  );
+
 
 
 
@@ -57,6 +62,11 @@ app.use(
 app.use(
   "/api/dashboard",
   dashboardRoutes
+);
+
+app.use(
+  "/api/reports",
+  reportRoutes
 );
 
 //5. Add a health-check route
