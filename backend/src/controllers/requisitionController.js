@@ -7,17 +7,37 @@ const getRequisitions = async (
   next
 ) => {
   try {
+    const { status, hospital } =
+      req.query;
+
+    const filter = {};
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (hospital) {
+      filter.hospital = hospital;
+    }
+
     const requisitions =
-      await Requisition.find()
-        .populate("hospital", "name")
+      await Requisition.find(filter)
+        .populate(
+          "hospital",
+          "name"
+        )
         .populate(
           "items.product",
           "item_name item_code"
-        );
+        )
+        .sort({
+          createdAt: -1,
+        });
 
     res.status(200).json({
       success: true,
-      count: requisitions.length,
+      count:
+        requisitions.length,
       requisitions,
     });
   } catch (error) {
