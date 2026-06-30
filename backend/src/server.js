@@ -6,6 +6,7 @@ const allocationRoutes = require(
   "./routes/allocationRoutes"
 );
 const hospitalRoutes = require("./routes/hospitalRoutes");
+const stockRoutes = require("./routes/stockRoutes");
 
 
 
@@ -33,6 +34,10 @@ app.use(
   allocationRoutes
 );
 app.use("/api/hospitals", hospitalRoutes);
+app.use(
+  "/api/stock",
+  stockRoutes
+);
 
 //5. Add a health-check route
 app.get("/", (req, res) => {

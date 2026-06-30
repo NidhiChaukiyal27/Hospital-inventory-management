@@ -334,13 +334,18 @@ const getUnfulfilledAllocations = async (
   next
 ) => {
   try {
+    const fortyEightHoursAgo =
+      new Date(
+        Date.now() -
+        48 * 60 * 60 * 1000
+      );
+
     const allocations =
       await Allocation.find({
-        status: {
-          $in: [
-            "PARTIAL",
-            "REJECTED",
-          ],
+        status: "IN_TRANSIT",
+        createdAt: {
+          $lte:
+            fortyEightHoursAgo,
         },
       })
         .populate(
@@ -350,10 +355,7 @@ const getUnfulfilledAllocations = async (
         .populate(
           "items.product",
           "item_name item_code"
-        )
-        .sort({
-          createdAt: -1,
-        });
+        );
 
     res.status(200).json({
       success: true,
