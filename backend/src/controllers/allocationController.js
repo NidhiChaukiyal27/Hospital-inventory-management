@@ -4,11 +4,62 @@ const Product = require("../models/Product");
 const Hospital = require("../models/Hospital");
 
 
-const getAllocations = async (req, res, next) => {
+const getAllocations = async (
+  req,
+  res,
+  next
+) => {
   try {
-    res.json({
+    const {
+      status,
+      hospital,
+      startDate,
+      endDate,
+    } = req.query;
+
+    const filter = {};
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (hospital) {
+      filter.hospital = hospital;
+    }
+
+    if (startDate || endDate) {
+      filter.createdAt = {};
+
+      if (startDate) {
+        filter.createdAt.$gte =
+          new Date(startDate);
+      }
+
+      if (endDate) {
+        filter.createdAt.$lte =
+          new Date(endDate);
+      }
+    }
+
+    const allocations =
+      await Allocation.find(filter)
+        .populate(
+          "hospital",
+          "name"
+        )
+        .populate(
+          "items.product",
+          "item_name item_code"
+        )
+        .sort({
+          createdAt: -1,
+        });
+
+    res.status(200).json({
       success: true,
-      message: "Get allocations API working",
+      count:
+        allocations.length,
+      allocations,
     });
   } catch (error) {
     next(error);
@@ -122,9 +173,20 @@ const createAllocation = async (
 
 const getAllocationById = async (req, res, next) => {
   try {
-    res.json({
+    const allocation = await Allocation.findById(req.params.id)
+      .populate("hospital")
+      .populate("items.product");
+
+    if (!allocation) {
+      return res.status(404).json({
+        success: false,
+        message: "Allocation not found",
+      });
+    }
+
+    res.status(200).json({
       success: true,
-      message: "Get allocation by ID API working",
+      allocation,
     });
   } catch (error) {
     next(error);
@@ -272,10 +334,32 @@ const getUnfulfilledAllocations = async (
   next
 ) => {
   try {
-    res.json({
+    const allocations =
+      await Allocation.find({
+        status: {
+          $in: [
+            "PARTIAL",
+            "REJECTED",
+          ],
+        },
+      })
+        .populate(
+          "hospital",
+          "name"
+        )
+        .populate(
+          "items.product",
+          "item_name item_code"
+        )
+        .sort({
+          createdAt: -1,
+        });
+
+    res.status(200).json({
       success: true,
-      message:
-        "Unfulfilled allocations API working",
+      count:
+        allocations.length,
+      allocations,
     });
   } catch (error) {
     next(error);
