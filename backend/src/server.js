@@ -7,6 +7,18 @@ const allocationRoutes = require(
 );
 const hospitalRoutes = require("./routes/hospitalRoutes");
 const stockRoutes = require("./routes/stockRoutes");
+const requisitionRoutes =
+  require(
+    "./routes/requisitionRoutes"
+  );
+
+const dashboardRoutes =
+  require(
+    "./routes/dashboardRoutes"
+  );
+
+
+
 
 
 
@@ -37,6 +49,14 @@ app.use("/api/hospitals", hospitalRoutes);
 app.use(
   "/api/stock",
   stockRoutes
+);
+app.use(
+  "/api/requisitions",
+  requisitionRoutes
+);
+app.use(
+  "/api/dashboard",
+  dashboardRoutes
 );
 
 //5. Add a health-check route
