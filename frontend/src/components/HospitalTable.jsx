@@ -29,11 +29,15 @@ function HospitalTable({
                                 Phone
                             </th>
 
-                            <th className="text-left pb-4">
-                                Status
-                            </th>
+                            
                             <th className="text-left pb-4">
                                 Inventory Items
+                            </th>
+                            <th className="text-left pb-4">
+                                Total Stock
+                            </th>
+                            <th className="text-left pb-4">
+                                Status
                             </th>
 
                         </tr>
@@ -62,6 +66,17 @@ function HospitalTable({
                                         {hospital.phone}
                                     </td>
 
+                                    
+                                    <td className="py-5">
+                                        {hospital.inventory.length}
+                                    </td>
+                                    <td className="py-5">
+                                        {hospital.inventory.reduce(
+                                            (sum, item) =>
+                                                sum + item.quantity,
+                                            0
+                                        )}
+                                    </td>
                                     <td className="py-5">
                                         {hospital.is_active ? (
                                             <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
@@ -72,9 +87,6 @@ function HospitalTable({
                                                 Inactive
                                             </span>
                                         )}
-                                    </td>
-                                    <td className="py-5">
-                                        {hospital.inventory.length}
                                     </td>
                                 </tr>
                             )
