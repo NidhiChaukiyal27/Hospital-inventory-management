@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 
 function Breadcrumb() {
+  
   const location = useLocation();
 
   const page =
@@ -11,7 +12,10 @@ function Breadcrumb() {
   const pageTitle =
     page.charAt(0).toUpperCase() +
     page.slice(1);
-
+  
+    if (page === "dashboard") {
+      return null;
+    }
   return (
     <div className="flex items-center gap-2 text-sm mb-8">
       <Link
