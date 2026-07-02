@@ -19,8 +19,18 @@ import AllocationPieChart from "../components/AllocationPieChart";
 import {
   getCentralDashboard,
 } from "../services/dashboardService";
+import RecentAllocations
+  from "../components/RecentAllocations";
+
+import {
+  getAllocations,
+} from "../services/allocationService";
 
 function Dashboard() {
+  const [
+    allocations,
+    setAllocations,
+  ] = useState([]);
   const [dashboard, setDashboard] =
     useState(null);
 
@@ -29,6 +39,7 @@ function Dashboard() {
 
   useEffect(() => {
     fetchDashboard();
+    fetchAllocations();
   }, []);
 
   const fetchDashboard =
@@ -44,6 +55,20 @@ function Dashboard() {
         console.log(error);
       } finally {
         setLoading(false);
+      }
+    };
+  const fetchAllocations =
+    async () => {
+      try {
+        const res =
+          await getAllocations();
+
+        setAllocations(
+          res.data.allocations
+            .slice(0, 10)
+        );
+      } catch (error) {
+        console.log(error);
       }
     };
 
@@ -114,6 +139,9 @@ function Dashboard() {
         />
 
       </div>
+      <RecentAllocations
+        allocations={allocations}
+      />
 
     </DashboardLayout>
   );
