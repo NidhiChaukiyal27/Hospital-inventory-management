@@ -5,11 +5,16 @@ import {
   FaTruck,
   FaClipboardList,
   FaFileAlt,
+  FaTimes,
 } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 
-function Sidebar() {
+function Sidebar({
+  sidebarOpen,
+  setSidebarOpen,
+  collapsed,
+}) {
   const user = JSON.parse(
     localStorage.getItem("user")
   );
@@ -21,25 +26,57 @@ function Sidebar() {
     user?.role === "hospital_staff";
 
   return (
-    <div className="w-64 min-h-screen bg-white border-r border-yellow-200 shadow-sm">
-      <div className="p-6">
-        <h1 className="text-3xl font-bold text-yellow-500">
+    <div
+      className={`
+        fixed md:static
+        z-50
+        min-h-screen
+        bg-white
+        border-r
+        border-yellow-200
+        shadow-sm
+        transition-all
+        duration-300
+        ${collapsed ? "w-20" : "w-64"}
+        ${
+          sidebarOpen
+            ? "translate-x-0"
+            : "-translate-x-full md:translate-x-0"
+        }
+      `}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between p-6">
+        {!collapsed && (
+          <h1 className="text-3xl font-bold text-yellow-500">
             HospitalIMS
-        </h1>
+          </h1>
+        )}
+
+        {/* Close button on mobile */}
+        <button
+          className="md:hidden"
+          onClick={() =>
+            setSidebarOpen(false)
+          }
+        >
+          <FaTimes />
+        </button>
       </div>
 
+      {/* Navigation */}
       <nav className="px-4 space-y-2">
 
-        {/* Dashboard - everyone can see */}
+        {/* Dashboard */}
         <Link
           to="/dashboard"
           className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
         >
           <FaChartPie />
-          Dashboard
+          {!collapsed && "Dashboard"}
         </Link>
 
-        {/* Admin only */}
+        {/* Admin Only */}
         {isAdmin && (
           <>
             <Link
@@ -47,7 +84,7 @@ function Sidebar() {
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
             >
               <FaBoxes />
-              Products
+              {!collapsed && "Products"}
             </Link>
 
             <Link
@@ -55,7 +92,7 @@ function Sidebar() {
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
             >
               <FaHospital />
-              Hospitals
+              {!collapsed && "Hospitals"}
             </Link>
 
             <Link
@@ -63,20 +100,22 @@ function Sidebar() {
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
             >
               <FaFileAlt />
-              Reports
+              {!collapsed && "Reports"}
             </Link>
           </>
         )}
 
-        {/* Both Admin and Hospital Staff */}
-        {(isAdmin || isHospitalStaff) && (
+        {/* Admin + Hospital Staff */}
+        {(isAdmin ||
+          isHospitalStaff) && (
           <>
             <Link
               to="/allocations"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
             >
               <FaTruck />
-              Allocations
+              {!collapsed &&
+                "Allocations"}
             </Link>
 
             <Link
@@ -84,7 +123,8 @@ function Sidebar() {
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
             >
               <FaClipboardList />
-              Requisitions
+              {!collapsed &&
+                "Requisitions"}
             </Link>
           </>
         )}

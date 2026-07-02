@@ -1,15 +1,47 @@
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import Breadcrumb from "../components/Breadcrumb";
 
-function DashboardLayout({ children }) {
+function DashboardLayout({
+  children,
+}) {
+  const [sidebarOpen,
+    setSidebarOpen] =
+    useState(false);
+
+  const [collapsed,
+    setCollapsed] =
+    useState(false);
+
   return (
-    <div className="flex">
-      <Sidebar />
+    <div className="flex min-h-screen">
+      <Sidebar
+        sidebarOpen={
+          sidebarOpen
+        }
+        setSidebarOpen={
+          setSidebarOpen
+        }
+        collapsed={
+          collapsed
+        }
+      />
 
       <div className="flex-1">
-        <Navbar />
+        <Navbar
+          setSidebarOpen={
+            setSidebarOpen
+          }
+          collapsed={
+            collapsed
+          }
+          setCollapsed={
+            setCollapsed
+          }
+        />
 
-        <main className="p-8 bg-yellow-50 min-h-screen">
+        <main className="bg-[#FFFDF5] min-h-screen p-8">
           {children}
         </main>
       </div>
