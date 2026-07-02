@@ -1,8 +1,12 @@
+import DashboardLayout from "../layouts/DashboardLayout";
+
 function Dashboard() {
   return (
-    <h1 className="text-3xl font-bold p-6">
-      Dashboard Page
-    </h1>
+    <DashboardLayout>
+      <h1 className="text-3xl font-bold">
+        Dashboard
+      </h1>
+    </DashboardLayout>
   );
 }
 

@@ -1,8 +1,12 @@
+import DashboardLayout from "../layouts/DashboardLayout";
+
 function Allocations() {
   return (
-    <h1 className="text-3xl font-bold p-6">
-      Allocations Page
-    </h1>
+    <DashboardLayout>
+      <h1 className="text-3xl font-bold">
+        Allocations
+      </h1>
+    </DashboardLayout>
   );
 }
 
