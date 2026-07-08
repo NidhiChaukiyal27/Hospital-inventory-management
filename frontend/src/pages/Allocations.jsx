@@ -6,6 +6,8 @@ import {
 import DashboardLayout from "../layouts/DashboardLayout";
 import Breadcrumb from "../components/Breadcrumb";
 import AllocationTable from "../components/AllocationTable";
+import CreateAllocationModal
+  from "../components/CreateAllocationModal";
 
 import {
   getAllocations,
@@ -23,6 +25,9 @@ function Allocations() {
   const [filter,
     setFilter] =
     useState("ALL");
+  const [showModal,
+    setShowModal] =
+    useState(false);
 
   const user = JSON.parse(
     localStorage.getItem("user")
@@ -52,10 +57,10 @@ function Allocations() {
     filter === "ALL"
       ? allocations
       : allocations.filter(
-          (allocation) =>
-            allocation.status ===
-            filter
-        );
+        (allocation) =>
+          allocation.status ===
+          filter
+      );
 
   return (
     <DashboardLayout>
@@ -71,9 +76,7 @@ function Allocations() {
         {user?.role === "admin" && (
           <button
             onClick={() =>
-              alert(
-                "Create Allocation clicked"
-              )
+              setShowModal(true)
             }
             className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-medium transition"
           >
@@ -98,10 +101,9 @@ function Allocations() {
               setFilter(status)
             }
             className={`px-4 py-2 rounded-full font-medium transition
-              ${
-                filter === status
-                  ? "bg-yellow-500 text-white"
-                  : "bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100"
+              ${filter === status
+                ? "bg-yellow-500 text-white"
+                : "bg-white border border-gray-300 text-gray-700 hover:bg-yellow-100"
               }`}
           >
             {status}
@@ -121,7 +123,16 @@ function Allocations() {
           }
         />
       )}
-
+      {showModal && (
+        <CreateAllocationModal
+          onClose={() =>
+            setShowModal(false)
+          }
+          onCreated={
+            fetchAllocations
+          }
+        />
+      )}
     </DashboardLayout>
   );
 }

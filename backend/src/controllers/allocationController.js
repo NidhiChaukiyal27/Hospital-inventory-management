@@ -71,6 +71,17 @@ const createAllocation = async (
   res,
   next
 ) => {
+      console.log(
+      "CONTENT TYPE:",
+      req.headers[
+        "content-type"
+      ]
+    );
+
+    console.log(
+      "BODY:",
+      req.body
+    );
   const session =
     await mongoose.startSession();
 
