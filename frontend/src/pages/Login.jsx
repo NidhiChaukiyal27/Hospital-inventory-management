@@ -1,7 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Truck, Loader2, AlertTriangle, X } from "lucide-react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaUser,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
+import {
+  Eye,
+  EyeOff,
+  PackagePlus,
+  Mail,
+  Lock,
+  Loader2,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import api from "../services/api";
 
@@ -17,17 +29,35 @@ function Login() {
     useState(false);
   const [loading, setLoading] =
     useState(false);
+  const [errors, setErrors] = useState({});
+  const validate = () => {
+    const e = {};
 
+    if (!email.trim()) {
+      e.email = "Email is required";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      e.email = "Enter a valid email";
+    }
+
+    if (!password) {
+      e.password = "Password is required";
+    } else if (password.length < 4) {
+      e.password =
+        "Password must be at least 4 characters";
+    }
+
+    setErrors(e);
+
+    return Object.keys(e).length === 0;
+  };
   const handleSubmit = async (
     e
   ) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      return toast.error(
-        "Please fill all fields"
-      );
-    }
+    if (!validate()) return;
 
     try {
       setLoading(true);
@@ -62,7 +92,7 @@ function Login() {
       toast.error(
         error.response?.data
           ?.message ||
-          "Login failed"
+        "Login failed"
       );
     } finally {
       setLoading(false);

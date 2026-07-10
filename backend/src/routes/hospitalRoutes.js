@@ -36,5 +36,13 @@ router.get("/", async (req, res) => {
     });
   }
 });
+router.post("/", async (req, res) => {
+  const hospital = await Hospital.create(req.body);
+
+  res.status(201).json({
+    success: true,
+    hospital,
+  });
+});
 
 module.exports = router;

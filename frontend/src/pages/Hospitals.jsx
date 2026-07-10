@@ -6,6 +6,7 @@ import {
 import DashboardLayout from "../layouts/DashboardLayout";
 import Breadcrumb from "../components/Breadcrumb";
 import HospitalTable from "../components/HospitalTable";
+import CreateHospitalModal from "../components/CreateHospitalModal";
 
 import {
   getHospitals,
@@ -19,6 +20,7 @@ function Hospitals() {
   const [loading,
     setLoading] =
     useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   const user = JSON.parse(
     localStorage.getItem("user")
@@ -55,11 +57,7 @@ function Hospitals() {
 
         {user?.role === "admin" && (
           <button
-            onClick={() =>
-              alert(
-                "Add Hospital clicked"
-              )
-            }
+            onClick={() => setShowModal(true)}
             className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-medium transition"
           >
             Add Hospital
@@ -77,8 +75,15 @@ function Hospitals() {
           hospitals={hospitals}
         />
       )}
+      {showModal && (
+        <CreateHospitalModal
+          onClose={() => setShowModal(false)}
+          onCreated={fetchHospitals}
+        />
+      )}
 
     </DashboardLayout>
+
   );
 }
 

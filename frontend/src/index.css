@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --ink: #121826;
   --ink-soft: #6b7280;
@@ -8,9 +10,6 @@
     Inter,
     sans-serif;
 }
-
-@import "tailwindcss";
-
 body {
   background-color: #ffffff;
   color: #1f2937;
