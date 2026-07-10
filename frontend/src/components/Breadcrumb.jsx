@@ -1,37 +1,23 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaChevronRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 
 function Breadcrumb() {
-  
   const location = useLocation();
 
-  const page =
-    location.pathname.slice(1) ||
-    "dashboard";
+  const page = location.pathname.slice(1) || "dashboard";
+  const pageTitle = page.charAt(0).toUpperCase() + page.slice(1);
 
-  const pageTitle =
-    page.charAt(0).toUpperCase() +
-    page.slice(1);
-  
-    if (page === "dashboard") {
-      return null;
-    }
+  if (page === "dashboard") {
+    return null;
+  }
+
   return (
-    <div className="flex items-center gap-2 text-sm mb-8">
-      <Link
-        to="/dashboard"
-        className="text-gray-500 hover:text-yellow-500 transition"
-      >
+    <div style={{ fontSize: 12.5, color: "var(--ink-soft)", display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+      <Link to="/dashboard" style={{ color: "var(--ink-soft)", textDecoration: "none" }}>
         Dashboard
       </Link>
-
-      <FaChevronRight
-        className="text-gray-400 text-xs"
-      />
-
-      <span className="font-semibold text-yellow-600">
-        {pageTitle}
-      </span>
+      <ChevronRight size={12} />
+      <span style={{ color: "var(--ink)", fontWeight: 600 }}>{pageTitle}</span>
     </div>
   );
 }

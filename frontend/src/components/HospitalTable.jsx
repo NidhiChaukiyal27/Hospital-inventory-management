@@ -1,103 +1,51 @@
-function HospitalTable({
-    hospitals,
-}) {
-    return (
-        <div className="bg-white rounded-3xl shadow-md p-8">
+function HospitalTable({ hospitals }) {
+  return (
+    <div className="table-wrap">
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Contact Person</th>
+            <th>Phone</th>
+            <th>Inventory Items</th>
+            <th>Total Stock</th>
+            <th>Status</th>
+          </tr>
+        </thead>
 
-            <h2 className="text-2xl font-bold mb-8">
-                Hospitals
-            </h2>
-
-            <div className="overflow-x-auto">
-                <table className="w-full">
-
-                    <thead>
-                        <tr className="border-b">
-                            <th className="text-left pb-4">
-                                Name
-                            </th>
-
-                            <th className="text-left pb-4">
-                                Address
-                            </th>
-
-                            <th className="text-left pb-4">
-                                Contact Person
-                            </th>
-
-                            <th className="text-left pb-4">
-                                Phone
-                            </th>
-
-                            
-                            <th className="text-left pb-4">
-                                Inventory Items
-                            </th>
-                            <th className="text-left pb-4">
-                                Total Stock
-                            </th>
-                            <th className="text-left pb-4">
-                                Status
-                            </th>
-
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {hospitals.map(
-                            (hospital) => (
-                                <tr
-                                    key={hospital._id}
-                                    className="border-b hover:bg-gray-50 transition"
-                                >
-                                    <td className="py-5 font-medium">
-                                        {hospital.name}
-                                    </td>
-
-                                    <td className="py-5">
-                                        {hospital.address}
-                                    </td>
-
-                                    <td className="py-5">
-                                        {hospital.contact_person}
-                                    </td>
-
-                                    <td className="py-5">
-                                        {hospital.phone}
-                                    </td>
-
-                                    
-                                    <td className="py-5">
-                                        {hospital.inventory.length}
-                                    </td>
-                                    <td className="py-5">
-                                        {hospital.inventory.reduce(
-                                            (sum, item) =>
-                                                sum + item.quantity,
-                                            0
-                                        )}
-                                    </td>
-                                    <td className="py-5">
-                                        {hospital.is_active ? (
-                                            <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                                                Active
-                                            </span>
-                                        ) : (
-                                            <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
-                                                Inactive
-                                            </span>
-                                        )}
-                                    </td>
-                                </tr>
-                            )
-                        )}
-                    </tbody>
-
-                </table>
-            </div>
-
-        </div>
-    );
+        <tbody>
+          {hospitals.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="empty-state">
+                No hospitals found.
+              </td>
+            </tr>
+          ) : (
+            hospitals.map((hospital) => (
+              <tr key={hospital._id}>
+                <td style={{ fontWeight: 600 }}>{hospital.name}</td>
+                <td>{hospital.address}</td>
+                <td>{hospital.contact_person}</td>
+                <td>{hospital.phone}</td>
+                <td>{hospital.inventory.length}</td>
+                <td style={{ fontVariantNumeric: "tabular-nums" }}>
+                  {hospital.inventory.reduce((sum, item) => sum + item.quantity, 0)}
+                </td>
+                <td>
+                  {hospital.is_active ? (
+                    <span className="badge badge-green">Active</span>
+                  ) : (
+                    <span className="badge badge-red">Inactive</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 export default HospitalTable;

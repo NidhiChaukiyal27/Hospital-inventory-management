@@ -1,60 +1,39 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaUser,
-  FaLock,
-  FaEye,
-  FaEyeSlash,
-} from "react-icons/fa";
-import {
-  Eye,
-  EyeOff,
-  PackagePlus,
-  Mail,
-  Lock,
-  Loader2,
-} from "lucide-react";
+import { Eye, EyeOff, HeartPulse } from "lucide-react";
 import { toast } from "react-toastify";
 import api from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] =
-    useState("");
-  const [password, setPassword] =
-    useState("");
-  const [showPassword,
-    setShowPassword] =
-    useState(false);
-  const [loading, setLoading] =
-    useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
   const validate = () => {
     const e = {};
 
     if (!email.trim()) {
       e.email = "Email is required";
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    ) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       e.email = "Enter a valid email";
     }
 
     if (!password) {
       e.password = "Password is required";
     } else if (password.length < 4) {
-      e.password =
-        "Password must be at least 4 characters";
+      e.password = "Password must be at least 4 characters";
     }
 
     setErrors(e);
 
     return Object.keys(e).length === 0;
   };
-  const handleSubmit = async (
-    e
-  ) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validate()) return;
@@ -62,133 +41,131 @@ function Login() {
     try {
       setLoading(true);
 
-      const res =
-        await api.post(
-          "/auth/login",
-          {
-            email,
-            password,
-          }
-        );
+      const res = await api.post("/auth/login", { email, password });
 
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(
-          res.data.user
-        )
-      );
-
-      toast.success(
-        "Login successful!"
-      );
+      toast.success("Login successful!");
 
       navigate("/dashboard");
     } catch (error) {
-      toast.error(
-        error.response?.data
-          ?.message ||
-        "Login failed"
-      );
+      toast.error(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-yellow-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-yellow-200 p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-yellow-500">
-            HospitalIMS
-          </h1>
+    <div style={{ minHeight: "100dvh", display: "flex" }}>
+      <div
+        className="login-aside"
+        style={{
+          flex: 1,
+          background: "var(--ink)",
+          color: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: 56,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 8,
+              background: "var(--yolk)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <HeartPulse size={19} color="var(--ink)" />
+          </div>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: 17 }}>HospitalIMS</span>
+        </div>
 
-          <p className="text-gray-500 mt-2">
-            Sign in to continue
+        <div>
+          <p style={{ fontFamily: "var(--font-display)", fontSize: 34, lineHeight: 1.25, maxWidth: 420, margin: 0 }}>
+            Every ward supplied, every shortage seen coming.
+          </p>
+          <p style={{ color: "#C9C4A4", fontSize: 14.5, marginTop: 16, maxWidth: 380, lineHeight: 1.7 }}>
+            Track central stock, allocations, and hospital requisitions across your network from a single dashboard.
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
-        >
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Email
-            </label>
+        <div style={{ display: "flex", gap: 28, fontSize: 13, color: "#9C9678" }}>
+          <span>Hospital Inventory Management System</span>
+        </div>
+      </div>
 
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 32 }}>
+        <form onSubmit={handleSubmit} noValidate style={{ width: "100%", maxWidth: 360 }}>
+          <h1 style={{ fontSize: 24, margin: "0 0 6px" }}>Sign in</h1>
+          <p style={{ color: "var(--ink-soft)", fontSize: 13.5, margin: "0 0 28px" }}>
+            Sign in to continue to your dashboard.
+          </p>
+
+          <div className="field">
+            <label>Email</label>
             <input
+              className={`input${errors.email ? " err" : ""}`}
               type="email"
               placeholder="Enter email"
               value={email}
-              onChange={(e) =>
-                setEmail(
-                  e.target.value
-                )
-              }
-              className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200"
+              onChange={(e) => setEmail(e.target.value)}
             />
+            {errors.email && <span className="field-error">{errors.email}</span>}
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Password
-            </label>
-
-            <div className="relative">
+          <div className="field">
+            <label>Password</label>
+            <div style={{ position: "relative" }}>
               <input
-                type={
-                  showPassword
-                    ? "text"
-                    : "password"
-                }
+                className={`input${errors.password ? " err" : ""}`}
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter password"
                 value={password}
-                onChange={(e) =>
-                  setPassword(
-                    e.target.value
-                  )
-                }
-                className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200"
+                onChange={(e) => setPassword(e.target.value)}
+                style={{ paddingRight: 42 }}
               />
-
               <button
                 type="button"
-                onClick={() =>
-                  setShowPassword(
-                    !showPassword
-                  )
-                }
-                className="absolute right-4 top-4 text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                style={{
+                  position: "absolute",
+                  right: 10,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--ink-soft)",
+                  display: "flex",
+                }}
               >
-                {showPassword ? (
-                  <FaEyeSlash />
-                ) : (
-                  <FaEye />
-                )}
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </div>
+            {errors.password && <span className="field-error">{errors.password}</span>}
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-3 rounded-xl transition duration-300 disabled:opacity-70"
-          >
-            {loading
-              ? "Logging in..."
-              : "Login"}
+          <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: "100%", justifyContent: "center", padding: 12 }}>
+            {loading ? "Logging in..." : "Login"}
           </button>
-        </form>
 
-        <div className="mt-8 text-center text-gray-400 text-sm">
-          Hospital Inventory Management System
-        </div>
+          <div style={{ marginTop: 28, textAlign: "center", color: "var(--ink-soft)", fontSize: 12.5 }}>
+            Hospital Inventory Management System
+          </div>
+        </form>
       </div>
+
+      <style>{`
+        @media (max-width: 860px) { .login-aside { display: none !important; } }
+      `}</style>
     </div>
   );
 }

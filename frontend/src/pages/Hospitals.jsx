@@ -1,30 +1,18 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import Breadcrumb from "../components/Breadcrumb";
 import HospitalTable from "../components/HospitalTable";
 import CreateHospitalModal from "../components/CreateHospitalModal";
 
-import {
-  getHospitals,
-} from "../services/hospitalService";
+import { getHospitals } from "../services/hospitalService";
 
 function Hospitals() {
-  const [hospitals,
-    setHospitals] =
-    useState([]);
-
-  const [loading,
-    setLoading] =
-    useState(true);
+  const [hospitals, setHospitals] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     fetchHospitals();
@@ -33,9 +21,6 @@ function Hospitals() {
   const fetchHospitals = async () => {
     try {
       const res = await getHospitals();
-
-      console.log(res.data);
-
       setHospitals(res.data.hospitals);
     } catch (error) {
       console.log(error);
@@ -46,44 +31,33 @@ function Hospitals() {
 
   return (
     <DashboardLayout>
-
       <Breadcrumb />
 
-      <div className="flex justify-between items-center mb-8">
-
-        <h1 className="text-4xl font-bold text-gray-800">
-          Hospitals
-        </h1>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Hospitals</h1>
+          <p className="page-subtitle">Every site connected to central supply.</p>
+        </div>
 
         {user?.role === "admin" && (
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-3 rounded-xl font-medium transition"
-          >
+          <button onClick={() => setShowModal(true)} className="btn btn-primary">
             Add Hospital
           </button>
         )}
-
       </div>
 
       {loading ? (
-        <div className="text-xl">
-          Loading...
-        </div>
+        <div className="empty-state">Loading hospitals…</div>
       ) : (
-        <HospitalTable
-          hospitals={hospitals}
-        />
+        <div className="card-flush" style={{ padding: 18 }}>
+          <HospitalTable hospitals={hospitals} />
+        </div>
       )}
+
       {showModal && (
-        <CreateHospitalModal
-          onClose={() => setShowModal(false)}
-          onCreated={fetchHospitals}
-        />
+        <CreateHospitalModal onClose={() => setShowModal(false)} onCreated={fetchHospitals} />
       )}
-
     </DashboardLayout>
-
   );
 }
 

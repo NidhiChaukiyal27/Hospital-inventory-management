@@ -1,28 +1,24 @@
-function KpiCard({
-  title,
-  value,
-  icon,
-  color,
-}) {
+function colorToChipClass(color = "") {
+  if (color.includes("green")) return "chip-green";
+  if (color.includes("blue")) return "chip-blue";
+  if (color.includes("red")) return "chip-red";
+  if (color.includes("yellow") || color.includes("yolk") || color.includes("orange")) return "chip-orange";
+  return "";
+}
+
+function KpiCard({ title, value, icon, color }) {
   return (
-    <div
-      className={`bg-white rounded-3xl shadow-md p-6 border-l-8 ${color}`}
-    >
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-gray-500 font-medium">
-            {title}
-          </p>
-
-          <h2 className="text-5xl font-bold text-gray-800 mt-4">
-            {value}
-          </h2>
-        </div>
-
-        <div className="text-4xl text-gray-500">
-          {icon}
-        </div>
+    <div className="card" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 14 }}>
+      <div>
+        <p style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink-soft)", margin: "0 0 10px", textTransform: "uppercase", letterSpacing: 0.4 }}>
+          {title}
+        </p>
+        <span style={{ fontFamily: "var(--font-display)", fontSize: 32, fontWeight: 500, color: "var(--ink)" }}>
+          {value}
+        </span>
       </div>
+
+      <div className={`icon-chip ${colorToChipClass(color)}`}>{icon}</div>
     </div>
   );
 }

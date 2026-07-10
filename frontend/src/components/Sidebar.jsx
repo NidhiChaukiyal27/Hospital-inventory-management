@@ -1,135 +1,120 @@
 import {
-  FaChartPie,
-  FaBoxes,
-  FaHospital,
-  FaTruck,
-  FaClipboardList,
-  FaFileAlt,
-  FaTimes,
-} from "react-icons/fa";
+  LayoutDashboard,
+  Package,
+  Building2,
+  FileBarChart2,
+  Truck,
+  ClipboardList,
+  X,
+  HeartPulse,
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
 
-import { Link } from "react-router-dom";
+function Sidebar({ sidebarOpen, setSidebarOpen, collapsed }) {
+  const user = JSON.parse(localStorage.getItem("user"));
 
-function Sidebar({
-  sidebarOpen,
-  setSidebarOpen,
-  collapsed,
-}) {
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const isAdmin = user?.role === "admin";
+  const isHospitalStaff = user?.role === "hospital_staff";
 
-  const isAdmin =
-    user?.role === "admin";
-
-  const isHospitalStaff =
-    user?.role === "hospital_staff";
+  const NAV = [
+    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, show: true },
+    { to: "/products", label: "Products", icon: Package, show: isAdmin },
+    { to: "/hospitals", label: "Hospitals", icon: Building2, show: isAdmin },
+    { to: "/reports", label: "Reports", icon: FileBarChart2, show: isAdmin },
+    { to: "/allocations", label: "Allocations", icon: Truck, show: isAdmin || isHospitalStaff },
+    { to: "/requisitions", label: "Requisitions", icon: ClipboardList, show: isAdmin || isHospitalStaff },
+  ];
 
   return (
-    <div
-      className={`
-        fixed md:static
-        z-50
-        min-h-screen
-        bg-white
-        border-r
-        border-yellow-200
-        shadow-sm
-        transition-all
-        duration-300
-        ${collapsed ? "w-20" : "w-64"}
-        ${
-          sidebarOpen
-            ? "translate-x-0"
-            : "-translate-x-full md:translate-x-0"
-        }
-      `}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between p-6">
-        {!collapsed && (
-          <h1 className="text-3xl font-bold text-yellow-500">
-            HospitalIMS
-          </h1>
-        )}
+    <>
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="no-print md:hidden"
+          style={{ position: "fixed", inset: 0, background: "rgba(34,29,15,0.45)", zIndex: 40 }}
+        />
+      )}
 
-        {/* Close button on mobile */}
-        <button
-          className="md:hidden"
-          onClick={() =>
-            setSidebarOpen(false)
-          }
+      <aside
+        className={`no-print fixed md:static top-0 left-0 h-screen md:h-auto min-h-screen z-50 transition-all duration-300 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+        style={{
+          width: collapsed ? 72 : 232,
+          background: "var(--ink)",
+          color: "#fff",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            padding: "20px 18px",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+          }}
         >
-          <FaTimes />
-        </button>
-      </div>
+          <div
+            style={{
+              width: 30,
+              height: 30,
+              minWidth: 30,
+              borderRadius: 7,
+              background: "var(--yolk)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <HeartPulse size={16} color="var(--ink)" />
+          </div>
+          {!collapsed && (
+            <span style={{ fontFamily: "var(--font-display)", fontSize: 15, whiteSpace: "nowrap", overflow: "hidden" }}>
+              HospitalIMS
+            </span>
+          )}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
+            className="md:hidden"
+            style={{ marginLeft: "auto", background: "none", border: "none", color: "#fff", cursor: "pointer" }}
+          >
+            <X size={18} />
+          </button>
+        </div>
 
-      {/* Navigation */}
-      <nav className="px-4 space-y-2">
-
-        {/* Dashboard */}
-        <Link
-          to="/dashboard"
-          className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
-        >
-          <FaChartPie />
-          {!collapsed && "Dashboard"}
-        </Link>
-
-        {/* Admin Only */}
-        {isAdmin && (
-          <>
-            <Link
-              to="/products"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
+        <nav style={{ flex: 1, padding: "14px 10px", display: "flex", flexDirection: "column", gap: 3, overflowY: "auto" }}>
+          {NAV.filter((item) => item.show).map(({ to, label, icon: Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={() => setSidebarOpen(false)}
+              title={collapsed ? label : undefined}
+              style={({ isActive }) => ({
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: collapsed ? "10px" : "10px 12px",
+                justifyContent: collapsed ? "center" : "flex-start",
+                borderRadius: 8,
+                textDecoration: "none",
+                background: isActive ? "var(--yolk)" : "transparent",
+                color: isActive ? "var(--ink)" : "#D8D3B4",
+                fontWeight: isActive ? 600 : 500,
+                fontSize: 13.5,
+              })}
             >
-              <FaBoxes />
-              {!collapsed && "Products"}
-            </Link>
-
-            <Link
-              to="/hospitals"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
-            >
-              <FaHospital />
-              {!collapsed && "Hospitals"}
-            </Link>
-
-            <Link
-              to="/reports"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
-            >
-              <FaFileAlt />
-              {!collapsed && "Reports"}
-            </Link>
-          </>
-        )}
-
-        {/* Admin + Hospital Staff */}
-        {(isAdmin ||
-          isHospitalStaff) && (
-          <>
-            <Link
-              to="/allocations"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
-            >
-              <FaTruck />
-              {!collapsed &&
-                "Allocations"}
-            </Link>
-
-            <Link
-              to="/requisitions"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-yellow-100 transition"
-            >
-              <FaClipboardList />
-              {!collapsed &&
-                "Requisitions"}
-            </Link>
-          </>
-        )}
-      </nav>
-    </div>
+              <Icon size={17} style={{ flexShrink: 0 }} />
+              {!collapsed && (
+                <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+      </aside>
+    </>
   );
 }
 

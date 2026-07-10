@@ -1,41 +1,32 @@
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
-function AllocationBarChart({
-  data,
-}) {
+function ChartTooltip({ active, payload, label }) {
+  if (!active || !payload || !payload.length) return null;
   return (
-    <div className="bg-white p-6 rounded-3xl shadow-md w-full">
-      <h2 className="text-xl font-bold mb-6">
-        Allocation Status
-      </h2>
+    <div style={{ background: "var(--ink)", color: "#fff", padding: "8px 12px", borderRadius: 8, fontSize: 12.5 }}>
+      <div style={{ fontWeight: 600, marginBottom: 4 }}>{label}</div>
+      {payload.map((p, i) => (
+        <div key={i} style={{ display: "flex", gap: 10, justifyContent: "space-between" }}>
+          <span>{p.name}</span>
+          <span>{p.value?.toLocaleString?.() ?? p.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-      <ResponsiveContainer
-        width="100%"
-        height={300}
-      >
-        <BarChart data={data}>
-          <CartesianGrid
-            strokeDasharray="3 3"
-          />
+function AllocationBarChart({ data }) {
+  return (
+    <div className="card">
+      <h3 style={{ fontSize: 15, marginBottom: 14 }}>Allocation Status</h3>
 
-          <XAxis dataKey="_id" />
-
-          <YAxis />
-
-          <Tooltip />
-
-          <Bar
-            dataKey="count"
-            radius={[8, 8, 0, 0]}
-          />
+      <ResponsiveContainer width="100%" height={280}>
+        <BarChart data={data} margin={{ left: -14, right: 8 }}>
+          <CartesianGrid stroke="var(--line)" vertical={false} />
+          <XAxis dataKey="_id" tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
+          <YAxis tick={{ fontSize: 11, fill: "var(--ink-soft)" }} axisLine={false} tickLine={false} />
+          <Tooltip content={<ChartTooltip />} cursor={{ fill: "var(--yolk-paleer)" }} />
+          <Bar dataKey="count" name="Count" fill="var(--yolk)" radius={[6, 6, 0, 0]} maxBarSize={48} />
         </BarChart>
       </ResponsiveContainer>
     </div>
