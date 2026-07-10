@@ -1,16 +1,7 @@
-import axios from "axios";
+import api from "./api";
 
-const API =
-  "http://localhost:5000/api";
+export const getCentralDashboard = () =>
+  api.get("/dashboard/central");
 
-export const getCentralDashboard =
-  () =>
-    axios.get(
-      `${API}/dashboard/central`
-    );
-
-export const getHospitalDashboard =
-  (hospitalId) =>
-    axios.get(
-      `${API}/dashboard/hospital/${hospitalId}`
-    );
+export const getHospitalDashboard = (hospitalId) =>
+  api.get(`/dashboard/hospital/${hospitalId}`);
